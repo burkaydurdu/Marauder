@@ -68,12 +68,13 @@
                             (not= (:admin %) (:city %))))
              (create-district-rows (:id city)))))
 
-(defn- get-files []
-  (->> "resources/data"
-       io/file
-       file-seq
-       (filter #(.isFile %))
-       (mapv #(.getName %))))
+(defn- get-files [path]
+  (some->> path
+           io/resource
+           io/file
+           file-seq
+           (filter #(.isFile %))
+           (mapv #(.getName %))))
 
 (defn- file-name [file]
   (some-> file (str/split #"\.") first))
@@ -82,8 +83,9 @@
   (db/get-country {:code code}))
 
 (defn- create-with-files []
-  (doseq [file (remove #(= % "country.edn") (get-files))
+  (doseq [file (remove #(= % "country.edn") (get-files "data/"))
           :let [path (str "data/" file)]]
+    (println "File:" path)
     (create-city path
                  (some-> file file-name str/upper-case country-from-db :id))
     (create-district path)))
