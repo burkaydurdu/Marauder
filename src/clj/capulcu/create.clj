@@ -8,8 +8,6 @@
             [capulcu.config :refer [env]]
             [clojure.string :as str]))
 
-(def country-codes ["tr"])
-
 (defn- once []
   (mount/start
    #'capulcu.config/env
@@ -84,20 +82,23 @@
 (defn- country-from-db [code]
   (db/get-country {:code code}))
 
+(defn- load-resource-data []
+  (distinct
+   (concat (get-files "resources/data/")
+           (get-files "../../resources/data/"))))
+
 (defn- create-with-files []
-  (doseq [file (remove #(= % "country.edn") (distinct (concat (get-files "resources/data/")
-                                                              (get-files "../../resources/data/"))))
+  (doseq [file (remove #(= % "country.edn") (load-resource-data))
           :let [path (str "data/" file)]]
     (println "File:" path)
-    (create-city path
-                 (some-> file file-name str/upper-case country-from-db :id))
+    (create-city path (some-> file file-name str/upper-case country-from-db :id))
     (create-district path)))
 
 (defn create-datas
-  "Create Datas"
+  "Data Generation"
   []
-  (println "Starting create datas")
+  (println "Data generation started")
   (once)
   (create-country)
   (create-with-files)
-  (println "Finishing create datas"))
+  (println "Data generation finished"))

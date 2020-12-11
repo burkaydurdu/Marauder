@@ -1,1 +1,4 @@
-{}
+{
+ ; set your dev database connection URL here
+ :database-url "postgresql://localhost/capulcu_test?user=bdurdu"
+}

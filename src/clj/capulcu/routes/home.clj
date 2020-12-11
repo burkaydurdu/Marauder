@@ -37,10 +37,14 @@
       (layout/render-error {:body   "Missing Parameter"
                             :status 400}))))
 
+(defn- health-check-page [request]
+  (layout/render request "check.html"))
+
 (defn home-routes []
   [""
    {:middleware [middleware/wrap-csrf
                  middleware/wrap-formats]}
+   ["/"          {:get health-check-page}]
    ["/countries" {:get countries}]
    ["/cities"    {:get cities}]
    ["/districts" {:get districts}]])
