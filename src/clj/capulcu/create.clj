@@ -69,12 +69,14 @@
              (create-district-rows (:id city)))))
 
 (defn- get-files [path]
+ (try
   (some->> path
-           io/resource
            io/file
            file-seq
            (filter #(.isFile %))
-           (mapv #(.getName %))))
+           (mapv #(.getName %)))
+  (catch Exception e
+    nil)))
 
 (defn- file-name [file]
   (some-> file (str/split #"\.") first))
@@ -83,7 +85,8 @@
   (db/get-country {:code code}))
 
 (defn- create-with-files []
-  (doseq [file (remove #(= % "country.edn") (get-files "data/"))
+  (doseq [file (remove #(= % "country.edn") (distinct (concat (get-files "resources/data/")
+                                                              (get-files "../../resources/data/"))))
           :let [path (str "data/" file)]]
     (println "File:" path)
     (create-city path
