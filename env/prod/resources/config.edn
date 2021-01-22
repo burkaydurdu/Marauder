@@ -1,3 +1,2 @@
 {:prod true
- :port 3000
- :database-url "postgres://xyrcfvisupiwqk:37e89dd9311a38598522a498c9f9c7eebf4e6d20a31ce4e943e25bbe4a57971e@ec2-54-159-107-189.compute-1.amazonaws.com:5432/d47l6o09tjoqb8"}
+ :port 3000}

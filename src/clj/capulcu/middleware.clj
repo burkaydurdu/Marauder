@@ -9,6 +9,7 @@
     [capulcu.config :refer [env]]
     [ring-ttl-session.core :refer [ttl-memory-store]]
     [ring.middleware.format :refer [wrap-restful-format]]
+    [ring.middleware.cors :refer [wrap-cors]]
     [ring.middleware.defaults :refer [site-defaults wrap-defaults]]))
 
 (defn wrap-internal-error [handler]
@@ -42,4 +43,6 @@
         (-> site-defaults
             (assoc-in [:security :anti-forgery] false)
             (assoc-in [:session :store] (ttl-memory-store (* 60 30)))))
-      wrap-internal-error))
+      wrap-internal-error
+      (wrap-cors :access-control-allow-origin [#"http://localhost:8280"]
+                 :access-control-allow-methods [:get :put :post :delete])))
